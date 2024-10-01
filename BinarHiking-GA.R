@@ -89,7 +89,8 @@ fitness <- function(star) {
       #*************
       #model = svm(trainyy ~ .,data = train1[,-ncol(train1)], type = 'C-classification',kernel = "linear", scale = FALSE);pred <-predict(model, test2,type="class")#gamma =0.001, cost = 1, degree=2)
       model<- naive_bayes(trainyy~., data= train1[,-ncol(train1)]);pred <-predict(model, test2,type="class");
-      # Fitness function: accuracy and feature selection trade-off(for SVM and NB use this fitness function)
+      
+      # Fitness function: accuracy and feature selection trade-off
       results =(sum(test_lable==pred)/length(pred)); fv=0.8*results+0.2*((col-ncol(train2))/col); accuracy1<-fv;
       score[[i]] = round(accuracy1, 3)
       
