@@ -242,7 +242,7 @@ while (t < Tmax + 1) {
       }
     }
     #****************Activate Genetic Operators: if FALSE original BHOA
-    if(FALSE){
+    if(TRUE){
       if(runif(1)<0.5) {
         P = CrossoverX(best_Pos, newPositions)
         fp1 = fitness(P[1,])
