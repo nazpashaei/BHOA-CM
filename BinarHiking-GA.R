@@ -21,7 +21,8 @@ library(naivebayes)
 library(gamesGA)
 
 # Path to the dataset (ARFF format)
-x <-"~/DARWIN.arff"
+#x <-"~/DARWIN.arff"
+x <-"~/Zscore-prostate-DEGS-297-0.8FC.arff"
 
 # Set random seed for reproducibility
 set.seed(2)
@@ -30,8 +31,8 @@ set.seed(2)
 data <- readARFF(x);data <- as.data.frame(data, check.names = TRUE)
 class <- data[, ncol(data)]
 
-# Optional: Convert class to numeric if using logit.spls
-# class <- as.numeric(class)-1; data$class <- class
+# Convert class to numeric if using logit.spls
+ class <- as.numeric(class)-1; data$class <- class
 
 # Ensure valid factor levels for classification
 levels(data$class) <- make.names(levels(data$class))
@@ -84,14 +85,13 @@ fitness <- function(star) {
       
       
       
-      #model <-logit.spls(Xtrain = train1[, -ncol(train1)],Ytrain = trainyy,Xtest=test2, lambda.ridge = 0.1,lambda.l1 =0.1,ncomp =3,adapt = TRUE,maxIter = 10,svd.decompose = TRUE);
-      #results =sum(model$hatYtest==test_lable)/length(test_lable);fv=0.8*results+0.2*((col-ncol(train2))/col);accuracy1<-fv;
+      model <-logit.spls(Xtrain = train1[, -ncol(train1)],Ytrain = trainyy,Xtest=test2, lambda.ridge = 0.01,lambda.l1 =0.1,ncomp =4,adapt = TRUE,maxIter = 10,svd.decompose = TRUE);
+      results =sum(model$hatYtest==test_lable)/length(test_lable);fv=0.8*results+0.2*((col-ncol(train2))/col);accuracy1<-fv;
       #*************
       #model = svm(trainyy ~ .,data = train1[,-ncol(train1)], type = 'C-classification',kernel = "linear", scale = FALSE);pred <-predict(model, test2,type="class")#gamma =0.001, cost = 1, degree=2)
-      model<- naive_bayes(trainyy~., data= train1[,-ncol(train1)]);pred <-predict(model, test2,type="class");
-      
-      # Fitness function: accuracy and feature selection trade-off
-      results =(sum(test_lable==pred)/length(pred)); fv=0.8*results+0.2*((col-ncol(train2))/col); accuracy1<-fv;
+      #model<- naive_bayes(trainyy~., data= train1[,-ncol(train1)]);pred <-predict(model, test2,type="class");
+      #--- Fitness function: accuracy and feature selection trade-off (SVM,RF, NB)
+      #results =(sum(test_lable==pred)/length(pred)); fv=0.8*results+0.2*((col-ncol(train2))/col); accuracy1<-fv;
       score[[i]] = round(accuracy1, 3)
       
     }
@@ -120,9 +120,8 @@ dtreecv5 <- function(data,xx){
     train <- tmp[tmp$id != i, -ncol(tmp)]; trainyy <- tmp[tmp$id != i,n2];form <- as.formula(trainyy~.)
     test <-  tmp[tmp$id == i, -ncol(tmp)]; testyy <- tmp[tmp$id == i,n2]
     
-    t<- naive_bayes(trainyy~., data= train[,-n2],usekernel = FALSE);pred <- predict(t, test[, -n2],type="class");accuracy1 =0; accuracy1 <- sum(pred == testyy)/length(pred);
-    #t <- logit.spls(Xtrain=train[,-n2], Ytrain=trainyy, lambda.ridge = 0.1,lambda.l1 =0.1,ncomp =6,adapt = TRUE,maxIter = 10,svd.decompose = TRUE, Xtest=test[, -n2]);accuracy1 =0; accuracy1 <- sum(t$hatYtest == testyy)/length(testyy);
-
+    #t<- naive_bayes(trainyy~., data= train[,-n2],usekernel = FALSE);pred <- predict(t, test[, -n2],type="class");accuracy1 =0; accuracy1 <- sum(pred == testyy)/length(pred);
+    t <- logit.spls(Xtrain=train[,-n2], Ytrain=trainyy, lambda.ridge = 0.01,lambda.l1 =0.1,ncomp =4,adapt = TRUE,maxIter = 10,svd.decompose = TRUE, Xtest=test[, -n2]);accuracy1 =0; accuracy1 <- sum(t$hatYtest == testyy)/length(testyy);
     allaccuracy[1,i] = accuracy1;
   }  
    return(mean(allaccuracy))
