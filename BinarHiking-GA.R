@@ -192,7 +192,7 @@ Dim = nVar
 best_Pos = matrix(0, nrow = 1, ncol = Dim)
 solo = matrix(0, nrow = 1, ncol = Dim)
 best_Score = -Inf
-Positions = (matrix(runif((N) * (nVar)), (N)))
+Positions = round(matrix(runif((N) * (nVar)), (N)))
 newPositions = matrix(0, nrow = N, ncol = Dim)
 PDConv = matrix(0, nrow = 1, ncol = Tmax)
 numberGene = matrix(0, nrow = 1, ncol = Tmax)
